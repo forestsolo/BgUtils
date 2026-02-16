@@ -24,22 +24,17 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /app
 
-# Install root dependencies
-COPY package*.json ./
-RUN npm install
-
-# Install example server dependencies
-COPY examples/node/package*.json ./examples/node/
-RUN cd examples/node && npm install
-
-# Copy everything
+# Copy everything first
 COPY . .
+
+# Install dependencies (skip prepare script, we'll build manually)
+RUN npm install --ignore-scripts
 
 # Build the main library
 RUN npm run build
 
-# Build the example server
-RUN cd examples/node && npx tsc
+# Install example server dependencies and build
+RUN cd examples/node && npm install && npx tsc
 
 EXPOSE 8080
 CMD ["node", "examples/node/dist/index.js"]
