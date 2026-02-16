@@ -24,18 +24,11 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 WORKDIR /app
 
-# Copy everything first
 COPY . .
 
-# Install dependencies (skip prepare script, we'll build manually)
 RUN npm install --ignore-scripts
 
-# Build the main library
 RUN npm run build
 
-# Install example server dependencies + tsx
-RUN cd examples/node && npm install --legacy-peer-deps && npm install tsx --legacy-peer-deps
-
-WORKDIR /app/examples/node
 EXPOSE 8080
-CMD ["npx", "tsx", "index.ts"]
+CMD ["node", "server.js"]
