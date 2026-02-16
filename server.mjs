@@ -1,43 +1,30 @@
 import http from 'http';
-import * as BgUtils from './dist/index.js';
+import { BG } from './dist/index.js';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
 
 const PORT = process.env.PORT || 8080;
 
-// Log available exports on startup
-console.log('BgUtils exports:', Object.keys(BgUtils));
-
 async function generateToken() {
     try {
-        const innertube = await Innertube.create({ retrieve_player: false });
-        
-        const requestKey = 'O43z0dpjhgX20SCx4KAo';
-        
-        const bgChallenge = await innertube.getAttestationChallenge(requestKey);
-        
-        if (!bgChallenge) {
-            throw new Error('Failed to get attestation challenge');
-        }
-        
+        // Create DOM environment for BotGuard
         const dom = new JSDOM();
         Object.assign(globalThis, {
             window: dom.window,
             document: dom.window.document
         });
+
+        const innertube = await Innertube.create({ retrieve_player: false });
         
-        const bgClient = new BgUtils.BgClient({
-            program: bgChallenge.program,
-            globalName: bgChallenge.globalName,
-            bgConfig: bgChallenge.bgConfig
-        });
+        // Get visitor data from session
+        const visitorData = innertube.session.context.client.visitorData;
         
-        await bgClient.load();
-        
-        const poToken = await bgClient.snapshot({ webPoSignalOutput: true });
+        // Use BG to generate the token
+        const bg = new BG(innertube);
+        const poToken = await bg.getPoToken();
         
         return {
-            visitorData: innertube.session.context.client.visitorData,
+            visitorData: visitorData,
             poToken: poToken
         };
     } catch (error) {
