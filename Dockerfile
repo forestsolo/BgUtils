@@ -28,6 +28,8 @@ COPY . .
 
 RUN npm install --ignore-scripts
 
+RUN npm install jsdom youtubei.js --legacy-peer-deps
+
 RUN npm run build
 
 EXPOSE 8080
