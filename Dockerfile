@@ -34,7 +34,7 @@ RUN npm install --ignore-scripts
 RUN npm run build
 
 # Install example server dependencies + tsx
-RUN cd examples/node && npm install --legacy-peer-deps && npm install tsx
+RUN cd examples/node && npm install --legacy-peer-deps && npm install tsx --legacy-peer-deps
 
 WORKDIR /app/examples/node
 EXPOSE 8080
