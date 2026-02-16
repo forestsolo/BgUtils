@@ -31,4 +31,4 @@ RUN npm install --ignore-scripts
 RUN npm run build
 
 EXPOSE 8080
-CMD ["node", "server.js"]
+CMD ["node", "server.mjs"]
