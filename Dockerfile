@@ -34,7 +34,7 @@ RUN npm install --ignore-scripts
 RUN npm run build
 
 # Install example server dependencies and build
-RUN cd examples/node && npm install && npx tsc
+RUN cd examples/node && npm install --legacy-peer-deps && npx tsc
 
 EXPOSE 8080
 CMD ["node", "examples/node/dist/index.js"]
