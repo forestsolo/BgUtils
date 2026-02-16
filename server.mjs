@@ -1,5 +1,5 @@
-const http = require('http');
-const { BG } = require('./dist/index.js');
+import http from 'http';
+import { BG } from './dist/index.js';
 
 const PORT = process.env.PORT || 8080;
 
