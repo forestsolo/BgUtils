@@ -33,8 +33,8 @@ RUN npm install --ignore-scripts
 # Build the main library
 RUN npm run build
 
-# Install example server dependencies and build
-RUN cd examples/node && npm install --legacy-peer-deps && npx tsc
+# Install example server dependencies
+RUN cd examples/node && npm install --legacy-peer-deps
 
 EXPOSE 8080
-CMD ["node", "examples/node/index.js"]
+CMD ["npx", "ts-node", "examples/node/index.ts"]
