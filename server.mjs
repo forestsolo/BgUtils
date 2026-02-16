@@ -9,8 +9,20 @@ async function generateToken() {
         const innertube = await Innertube.create({ retrieve_player: false });
         const visitorData = innertube.session.context.client.visitorData;
         
+        // Decode visitorData from base64 URL-safe format
+        let decodedVisitorData = visitorData;
+        try {
+            // visitorData is base64 encoded, decode to get the raw ID
+            const decoded = Buffer.from(visitorData.replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString('utf8');
+            // Extract just the visitor ID part (usually first 11-20 chars)
+            decodedVisitorData = decoded.substring(0, 20);
+        } catch (e) {
+            // Use first 20 chars if decode fails
+            decodedVisitorData = visitorData.substring(0, 20);
+        }
+        
         // Generate a placeholder/cold-start token
-        const placeholderPoToken = BG.PoToken.generatePlaceholder(visitorData);
+        const placeholderPoToken = BG.PoToken.generatePlaceholder(decodedVisitorData);
         
         return {
             visitorData: visitorData,
