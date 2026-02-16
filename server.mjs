@@ -1,15 +1,18 @@
 import http from 'http';
-import { BotGuardClient } from './dist/index.js';
+import * as BgUtils from './dist/index.js';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
 
 const PORT = process.env.PORT || 8080;
 
+// Log available exports on startup
+console.log('BgUtils exports:', Object.keys(BgUtils));
+
 async function generateToken() {
     try {
         const innertube = await Innertube.create({ retrieve_player: false });
         
-        const requestKey = innertube.session.po_token?.params?.requestKey || 'O43z0dpjhgX20SCx4KAo';
+        const requestKey = 'O43z0dpjhgX20SCx4KAo';
         
         const bgChallenge = await innertube.getAttestationChallenge(requestKey);
         
@@ -23,7 +26,7 @@ async function generateToken() {
             document: dom.window.document
         });
         
-        const bgClient = new BotGuardClient({
+        const bgClient = new BgUtils.BgClient({
             program: bgChallenge.program,
             globalName: bgChallenge.globalName,
             bgConfig: bgChallenge.bgConfig
