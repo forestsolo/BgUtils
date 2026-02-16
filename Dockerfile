@@ -37,4 +37,4 @@ RUN npm run build
 RUN cd examples/node && npm install --legacy-peer-deps && npx tsc
 
 EXPOSE 8080
-CMD ["node", "examples/node/dist/index.js"]
+CMD ["node", "examples/node/index.js"]
