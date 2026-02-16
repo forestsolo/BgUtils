@@ -1,13 +1,17 @@
 import http from 'http';
-import { BG } from './dist/index.js';
+import { BG, default as BgDefault } from './dist/index.js';
 import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
 
 const PORT = process.env.PORT || 8080;
 
+// Log what BG actually is
+console.log('BG type:', typeof BG);
+console.log('BG:', BG);
+console.log('BgDefault:', BgDefault);
+
 async function generateToken() {
     try {
-        // Create DOM environment for BotGuard
         const dom = new JSDOM();
         Object.assign(globalThis, {
             window: dom.window,
@@ -15,13 +19,22 @@ async function generateToken() {
         });
 
         const innertube = await Innertube.create({ retrieve_player: false });
-        
-        // Get visitor data from session
         const visitorData = innertube.session.context.client.visitorData;
         
-        // Use BG to generate the token
-        const bg = new BG(innertube);
-        const poToken = await bg.getPoToken();
+        // Try different ways to use BG
+        let poToken;
+        if (typeof BG === 'function') {
+            const bg = new BG(innertube);
+            poToken = await bg.getPoToken();
+        } else if (BG.create) {
+            const bg = await BG.create(innertube);
+            poToken = await bg.getPoToken();
+        } else if (BG.getPoToken) {
+            poToken = await BG.getPoToken(innertube);
+        } else {
+            // Just return what we have
+            poToken = 'check_logs';
+        }
         
         return {
             visitorData: visitorData,
