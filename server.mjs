@@ -1,41 +1,20 @@
 import http from 'http';
 import { BG } from './dist/index.js';
-import { JSDOM } from 'jsdom';
 import { Innertube } from 'youtubei.js';
 
 const PORT = process.env.PORT || 8080;
 
 async function generateToken() {
     try {
-        const dom = new JSDOM();
-        Object.assign(globalThis, {
-            window: dom.window,
-            document: dom.window.document
-        });
-
         const innertube = await Innertube.create({ retrieve_player: false });
         const visitorData = innertube.session.context.client.visitorData;
         
-        // Create challenge with native fetch
-        const challenge = await BG.Challenge.create({
-            requestKey: 'O43z0dpjhgX20SCx4KAo',
-            fetch: fetch
-        });
-        
-        if (!challenge) {
-            throw new Error('Failed to create challenge');
-        }
-        
-        // Create BotGuardClient with the challenge
-        const bgClient = new BG.BotGuardClient(challenge);
-        await bgClient.load();
-        
-        // Generate PoToken
-        const poToken = await BG.PoToken.generate(bgClient);
+        // Generate a placeholder/cold-start token
+        const placeholderPoToken = BG.PoToken.generatePlaceholder(visitorData);
         
         return {
             visitorData: visitorData,
-            poToken: poToken
+            poToken: placeholderPoToken
         };
     } catch (error) {
         console.error('Token generation error:', error);
