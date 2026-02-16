@@ -16,10 +16,10 @@ async function generateToken() {
         const innertube = await Innertube.create({ retrieve_player: false });
         const visitorData = innertube.session.context.client.visitorData;
         
-        // Create challenge with fetch function
+        // Create challenge with native fetch
         const challenge = await BG.Challenge.create({
             requestKey: 'O43z0dpjhgX20SCx4KAo',
-            fetch: (url, options) => innertube.session.http.fetch(url, options)
+            fetch: fetch
         });
         
         if (!challenge) {
